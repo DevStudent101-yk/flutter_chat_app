@@ -8,6 +8,7 @@ import 'package:chat_app/screens/chat.dart';
 import 'firebase_options.dart';
 import 'package:chat_app/screens/auth.dart';
 import 'package:chat_app/screens/user_list_screen.dart';
+import 'package:chat_app/screens/intro_pages/intro_page1.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,30 +23,33 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'FlutterChat',
-      theme: ThemeData().copyWith(
-        useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(
-            seedColor: const Color.fromARGB(255, 63, 17, 177)),
-      ),
-      home: StreamBuilder(
-          stream: FirebaseAuth.instance.authStateChanges(),
-          builder: (ctx, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const SplashScreen();
-            }
-
-            if (snapshot.hasData) {
-              return const UserListScreen();
-            }
-//             Navigator.of(context).pushReplacement(
-//   MaterialPageRoute(builder: (ctx) => const UserListScreen()),
-// );
-
-
-            return const AuthScreen();
-          }),
+    return StreamBuilder<User?>(
+      stream: FirebaseAuth.instance.authStateChanges(),
+      builder: (ctx, snapshot) {
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          key: ValueKey(snapshot.data?.uid), // ✅ Triggers rebuild on auth change
+          title: 'FlutterChat',
+          theme: ThemeData().copyWith(
+            colorScheme: ColorScheme.fromSeed(
+              seedColor: const Color.fromARGB(255, 63, 17, 177),
+            ),
+          ),
+          home: _buildHome(snapshot),
+        );
+      },
     );
   }
-} 
+
+  Widget _buildHome(AsyncSnapshot<User?> snapshot) {
+    if (snapshot.connectionState == ConnectionState.waiting) {
+      return const SplashScreen(); // ⏳ still loading
+    }
+
+    if (snapshot.hasData) {
+      return const UserListScreen(); // ✅ user logged in
+    }
+
+    return const IntroPage1(); // 🚪 user not logged in
+  }
+}

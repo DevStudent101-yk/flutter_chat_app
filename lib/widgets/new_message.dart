@@ -58,10 +58,16 @@ class _NewMessageState extends State<NewMessage> {
 }
 
 
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 15, right: 1, bottom: 14),
+ @override
+Widget build(BuildContext context) {
+  return Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+    child: Container(
+      decoration: BoxDecoration(
+        color: const Color(0xFFE8E1DA), // light warm background
+        borderRadius: BorderRadius.circular(30),
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
       child: Row(
         children: [
           Expanded(
@@ -70,18 +76,21 @@ class _NewMessageState extends State<NewMessage> {
               textCapitalization: TextCapitalization.sentences,
               autocorrect: true,
               enableSuggestions: true,
-              decoration: const InputDecoration(labelText: 'Send a message...'),
+              decoration: const InputDecoration(
+                hintText: 'Type a message...',
+                border: InputBorder.none,
+                contentPadding: EdgeInsets.symmetric(horizontal: 10),
+              ),
             ),
           ),
           IconButton(
-            color: Theme.of(context).colorScheme.primary,
-            icon: const Icon(
-              Icons.send,
-            ),
+            icon: const Icon(Icons.send, color: Color(0xFF63533F)), // warm accent
             onPressed: _submitMessage,
           ),
         ],
       ),
-    );
-  }
+    ),
+  );
+}
+
 }
